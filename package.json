@@ -1,0 +1,25 @@
+{
+  "name": "gameon-website-fr",
+  "version": "1.0.0",
+  "description": "landing page of gameOn",
+  "main": "./starterOnly/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "npx webpack serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gsebdev/GameOn-website-FR.git"
+  },
+  "author": "Sebastien Gault",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gsebdev/GameOn-website-FR/issues"
+  },
+  "homepage": "https://github.com/gsebdev/GameOn-website-FR#readme",
+  "devDependencies": {
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0",
+    "webpack-dev-server": "^4.11.1"
+  }
+}
