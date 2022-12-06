@@ -5,9 +5,6 @@ export default class Modal {
         this.modalContainerEl = modalContainerEl;
         this.modalCloseEl = modalCloseEl;
         this.modalOpenEl = modalOpenEl;
-    }
-
-    init() {
         this.modalOpenEl.forEach((el) => el.addEventListener("click", this.open.bind(this)));
         this.modalCloseEl.forEach((el) => el.addEventListener("click", this.close.bind(this)));
     }
@@ -22,9 +19,10 @@ export default class Modal {
        
     }
     reset() {
-        this.modalContainerEl.querySelectorAll('input:not(input[type=submit]').forEach(input => { 
-            input.value = '';
-            input.checked = false;
-          });
+        this.modalContainerEl.querySelectorAll('input:not(input[type=submit]):not(input[type=checkbox]):not(input[type=radio])')
+            .forEach( input => input.value = '' );
+
+        this.modalContainerEl.querySelectorAll('input[type=checkbox], input[type=radio]')
+            .forEach( input => input.checked = false );
     }
 }
