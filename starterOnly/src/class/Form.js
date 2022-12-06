@@ -23,24 +23,23 @@ export default class Form {
             const inputs = dataEl.querySelectorAll('input');
             const inputData = this.validateData(inputs);
 
-            if (inputData.hasError === true) {
+            if (inputData.hasError !== false) {
 
                 errors.push(1);
-                dataEl.classList.add('formData--has-error');
+                this.displayError(dataEl, inputData.hasError);
 
             } else if ( inputData.hasError === false ) {
-
-                dataEl.classList.remove('formData--has-error');
-                data[inputData.name] = inputData.value;
                 errors.push(0);
+                this.hideError(dataEl);
+                data[inputData.name] = inputData.value;
             }
 
         });
 
-        //On vérifie que tout les .formData ont passé la vérification et qu'il n'y a pas d'erreurs
+        //On vérifie qu'il n'y a pas d'erreurs
 
         errorsSum = errors.reduce((a, current) => a + current, 0);
-        
+
         if( errors.length === formData.length && errorsSum === 0 ){
            
             this.send(data);
@@ -53,46 +52,63 @@ export default class Form {
             name: inputs[0].name,
             value: 'error'
         }
+        let errorMsg;
         
         switch(inputs[0].type) {
 
             case 'text':
-                inputs[0].value.length < 2 ? data.hasError = true : (data.value = inputs[0].value, data.hasError = false);
+                errorMsg = "Veuillez entrer au minimum 2 caractères !";
+                inputs[0].value.length < 2 ? data.hasError = errorMsg : (data.value = inputs[0].value, data.hasError = false);
                 break;
 
             case 'email':
-                !inputs[0].value.match(/^([\w\.\-]+)@([\w\-]+)((\.(\w){2,6})+)$/) ? data.hasError = true : (data.value = inputs[0].value, data.hasError = false);
+                errorMsg = "Adresse Email invalide, merci de modifier";
+                !inputs[0].value.match(/^([\w\.\-]+)@([\w\-]+)((\.(\w){2,6})+)$/) ? data.hasError = errorMsg : (data.value = inputs[0].value, data.hasError = false);
                 break;
 
             case 'number':
-                !inputs[0].value.match(/^\d+$/) ? data.hasError = true : (data.value = inputs[0].value, data.hasError = false);
+                errorMsg = "Merci d'entrer une valeur numérique";
+                !inputs[0].value.match(/^\d+$/) ? data.hasError = errorMsg : (data.value = inputs[0].value, data.hasError = false);
                 break;
 
             case 'radio':
+                errorMsg = "Merci de sélectionner une localité";
                 const checked = inputs[0].parentElement.querySelectorAll(':checked');
-                checked.length !== 1 ? data.hasError = true : (data.value = checked[0].value, data.hasError = false);
+                checked.length !== 1 ? data.hasError = errorMsg : (data.value = checked[0].value, data.hasError = false);
                 break;    
 
             case 'checkbox':
+                errorMsg = "Merci de cocher la case conditions générales";
                 let errors = 0;
                 let values = {};
                 inputs.forEach(input => {
                     !input.checked && input.hasAttribute('required') ? errors += 1 : values[input.id] = input.checked;
                 });
-                errors !== 0 ? data.hasError = true : (data.value = values, data.hasError = false);
+                errors !== 0 ? data.hasError = errorMsg : (data.value = values, data.hasError = false);
                 break;
 
             case 'date':
+                errorMsg = "Veuillez saisir une date de naissance valide";
                 const date = Date.parse(inputs[0].value);
                 const today = Date.now();
                 const minDate = Date.parse('1920-01-01');
                 
-                date !== NaN && minDate <= date && date < today ? (data.value = inputs[0].value, data.hasError = false) : data.hasError = true;
+                date !== NaN && minDate <= date && date < today ? (data.value = inputs[0].value, data.hasError = false) : data.hasError = errorMsg;
                 break;
 
         }
         return data;
 
+    }
+
+    displayError(el, errorMsg) {
+        el.setAttribute('data-error', errorMsg);
+        el.setAttribute('data-error-visible', true);
+    }
+
+
+    hideError(el) {
+        el.setAttribute('data-error-visible', false);
     }
 
     send(data) {
