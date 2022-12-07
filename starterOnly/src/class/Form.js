@@ -113,6 +113,16 @@ export default class Form {
 
     send(data) {
         console.log(data);
+        const sendFunc = new Promise((resolve, reject) => {
+            setTimeout(() => resolve('Success!'), 2000);
+        });
+
+        sendFunc.then(
+            (response) => {
+                console.log(response);
+            }
+        )
+       
     }
 
 }
