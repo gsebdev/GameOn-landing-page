@@ -11,14 +11,14 @@
 /* Landing Page */
 
 body {
-  margin: 0;
   display: flex;
   flex-direction: column;
   background-image: url("background.png");
   font-family: var(--font-default);
   font-size: 18px;
-  max-width: 1300px;
+  max-width: 1440px;
   margin: 0 auto;
+  padding: 0 6.9%;
 }
 
 p {
@@ -32,7 +32,7 @@ img {
 
 .topnav {
   overflow: hidden;
-  margin: 3.5%;
+  margin: 60px -4.65% 86px 0;
 }
 .header-logo {
     float: left;
@@ -41,27 +41,37 @@ img {
     float: right;
 }
 .topnav a {
+  position: relative;
   float: left;
   display: block;
   color: #000000;
   text-align: center;
-  padding: 12px 12px;
-  margin: 5px;
+  padding: 8px 12px;
+  margin: 3px;
   text-decoration: none;
-  font-size: 20px;
-  font-family: Roboto, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: all 0.2s;
 }
 
-.topnav a:hover {
-  background-color: #ff0000;
+.topnav a:hover, .topnav a.active {
+  background-color: #FE142F;
   color: #ffffff;
-  border-radius: 15px;
 }
-
-.topnav a.active {
-  background-color: #ff0000;
-  color: #ffffff;
-  border-radius: 15px;
+.topnav a::before {
+  content: "";
+  height: 1px;
+  position: absolute;
+  width: calc(100% - 24px);
+  bottom: 8px;
+  left: 12px;
+  background-color: white;
+  opacity: 0;
+  transition: all 0.2s;
+}
+.topnav a:hover::before, .topnav a.active::before {
+  opacity: 1;
 }
 
 .topnav .icon {
@@ -105,10 +115,7 @@ main {
   font-size: 130%;
   font-weight: bolder;
   color: black;
-  padding-top: 0.5vw;
-  padding-left: 2vw;
-  padding-right: 2vw;
-  margin: 1px 20px 15px;
+  margin: 0;
   border-radius: 2rem;
   text-align: justify;
 
@@ -405,31 +412,19 @@ input[data-error]::after {
   font-size: 16px;
 }
 .hero-section {
-  min-height: 93vh;
   border-radius: 10px;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   overflow: hidden;
-  box-shadow: 0 2px 7px 2px rgba(0, 0, 0, 0.2);
-  margin-bottom: 10px;
+  box-shadow: 0 5px 7px 2px rgba(0, 0, 0, 0.2);
 }
 .hero-content {
-  padding: 51px 67px;
-  grid-column: span 4;
+  padding: 53px 56px 70px;
+  grid-column: span 5;
   background: #232323;
   color: #fff;
   position: relative;
   text-align: left;
-  min-width: 424px;
-}
-.hero-content::after {
-  content: "";
-  width: 100%;
-  height: 100%;
-  background: #232323;
-  position: absolute;
-  right: -80px;
-  top: 0;
 }
 .hero-content > * {
   position: relative;
@@ -437,12 +432,13 @@ input[data-error]::after {
 }
 .hero-headline {
   font-size: 6rem;
-  font-weight: normal;
+  font-weight: 500;
   white-space: nowrap;
 }
 .hero-text {
-  width: 146%;
+  width: 100%;
   font-weight: normal;
+  font-size: 1.2rem;
   margin-top: 57px;
   padding: 0;
 }
@@ -450,14 +446,20 @@ input[data-error]::after {
   outline: none;
   text-transform: capitalize;
   font-size: 1.3rem;
-  padding: 15px 23px;
+  padding: 15px 30px;
   margin: 0;
   margin-top: 59px;
 }
 .hero-img {
-  grid-column: span 8;
+  grid-column: span 7;
+  position: relative;
+  height: 100%;
 }
 .hero-img img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
   width: 100%;
   height: 100%;
   display: block;
@@ -467,16 +469,15 @@ input[data-error]::after {
   color: #fe142f;
   padding: 0;
   font-size: 1rem;
-  margin: 60px 0 30px;
+  margin: 100px 0 63px;
   font-weight: bolder;
 }
 .hero-section > .btn-signup {
   display: none;
 }
 footer {
-  padding-left: 2vw;
-  padding-right: 2vw;
-  margin: 0 20px;
+  padding: 0;
+  margin-left: -4%;
 }
 @media screen and (max-width: 800px) {
   .hero-section {
