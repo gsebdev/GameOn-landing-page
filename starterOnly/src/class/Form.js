@@ -1,17 +1,20 @@
 export default class Form {
-    constructor(formEl) {
-        this.formEl = formEl;
-        // le 'click' sur le bouton submit est écouté
-        this.formEl.addEventListener('submit', (e) => {
+    constructor(form) {
+        this.form = form;
+        
+
+    }
+
+    init() {
+        document.querySelector('#' + this.form.id).addEventListener('submit', (e) => {
             e.preventDefault();
             this.handleSubmit(this);
         });
-
     }
 
     handleSubmit() {
         
-        const formData = this.formEl.querySelectorAll('.formData');
+        const formData = document.querySelector('#' + this.form.id).querySelectorAll('.formData');
         let errors = [];
         let errorsSum;
         let data = {};
@@ -44,6 +47,41 @@ export default class Form {
            
             this.send(data);
         }
+    }
+
+    make(parentElement) {
+        let html = '';
+        html += `<form id="${this.form.id}" name="${this.form.reserve}" action="${this.form.action}" method="${this.form.action}" novalidate>`;
+
+
+        this.form.data.forEach((formData) => {
+            
+            if (formData.before_html) {
+                html += formData.before_html;
+            }
+
+            html += `<div class="formData">`;
+
+            formData.inputs.forEach((input) => {
+                if(formData.label_after) {
+                    
+                    html += `<input class="${formData.input_class ? formData.input_class : false}" type="${formData.type}" id="${input.id}" name="${formData.name}" ${input.required ? 'required': false} /><label class="${formData.label_class ? formData.label_class : false}" for="${input.id}">${input.label}</label>
+                    `;
+
+                } else {
+                    html += `<label class="${formData.label_class ? formData.label_class : false}" for="${input.id}">${input.label}</label><br>
+                    <input class="${formData.input_class ? formData.input_class : false}" type="${formData.type}" id="${input.id}" name="${formData.name}" ${input.required ? 'required': false} />`;
+                }
+
+            });
+
+            html += `</div>`;
+        });
+
+        html += `<input class="btn-submit" type="submit" class="button" value="${this.form.submit}" /></form>`;
+        
+        parentElement.innerHTML = html;
+
     }
 
 

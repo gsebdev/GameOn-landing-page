@@ -1,28 +1,35 @@
 export default class Modal {
 
-    constructor(modalContainerEl, modalCloseEl, modalOpenEl) {
+    constructor(modalObject) {
+
+        this.modalObject = modalObject;
+        document.querySelector('main').insertAdjacentHTML('afterbegin', '<div class="bground"><div class="content"><span class="close"></span><div class="modal-body"></div></div></div></div>');
         
-        this.modalContainerEl = modalContainerEl;
-        this.modalCloseEl = modalCloseEl;
-        this.modalOpenEl = modalOpenEl;
+        this.modalContainerEl = document.querySelector(".bground");
+        this.modalCloseEl = document.querySelectorAll('.close');
+        this.modalOpenEl = document.querySelectorAll(".modal-btn");
+        
         this.modalOpenEl.forEach((el) => el.addEventListener("click", this.open.bind(this)));
         this.modalCloseEl.forEach((el) => el.addEventListener("click", this.close.bind(this)));
     }
+
+    init() {
+        this.modalObject.make(this.modalContainerEl.querySelector('.modal-body'));
+        this.modalObject.init();
+    }
     
     open() {
-        this.modalContainerEl.style.display = 'block';
+        this.init(this);
+        this.modalContainerEl.setAttribute('data-opened', true);
+        window.scrollTo({ top: 0 });
     }
 
     close() {
-        this.modalContainerEl.style.display = 'none';
+        this.modalContainerEl.setAttribute('data-opened', false);
         this.reset(this);
        
     }
     reset() {
-        this.modalContainerEl.querySelectorAll('input:not(input[type=submit]):not(input[type=checkbox]):not(input[type=radio])')
-            .forEach( input => input.value = '' );
-
-        this.modalContainerEl.querySelectorAll('input[type=checkbox], input[type=radio]')
-            .forEach( input => input.checked = false );
+        this.modalContainerEl.querySelector('.modal-body').innerHTML = '';
     }
 }
