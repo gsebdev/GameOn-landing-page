@@ -2,6 +2,8 @@ export default class Form {
   constructor (form) {
     this.form = form
     this.sent = false
+    this.errors = null
+    this.data = {}
     this.formEl = null
   }
 
@@ -24,34 +26,15 @@ export default class Form {
   }
 
   handleSubmit () {
-    const formData = this.formEl.querySelectorAll('.formData')
-    const errors = []
-    let errorsSum = null
-    const data = {}
-
-    // chaque élément .formData du formulaire est validé puis il est rajouté à la variable {data}
-
-    formData.forEach(dataEl => {
-      const inputs = dataEl.querySelectorAll('input')
-      const inputData = this.validateData(inputs)
-
-      if (inputData.hasError !== false) {
-        errors.push(1)
-        this.displayError(dataEl, inputData.hasError)
-      } else if (inputData.hasError === false) {
-        errors.push(0)
-        this.hideError(dataEl)
-        data[inputData.name] = inputData.value
-      }
-    })
-
     // On vérifie qu'il n'y a pas d'erreurs et que tous les champs de données ont passé la validation
     // Si oui la methode send() est appelé pour envoyer au serveur
-
-    errorsSum = errors.reduce((a, current) => a + current, 0)
-
-    if (errors.length === formData.length && errorsSum === 0) {
-      this.send(data)
+    if (this.validateAllData(this)) {
+      this.send(this.data)
+    } else {
+      this.errors = true
+      this.formEl.querySelectorAll('input:not([type=submit])').forEach(el => el.addEventListener('input', (e) => {
+        this.validateSingleData(e.target.parentElement)
+      }))
     }
   }
 
@@ -92,13 +75,23 @@ export default class Form {
 
   // la methode validateData permet de valider un element formData pouvant contenir plusieurs inputs
   // la validation prend en compte le type de champ input
-  validateData (inputs) {
-    // initialisation de la valeur de retour {data}
-    const data = {
-      name: inputs[0].name,
-      value: 'error'
-    }
+  validateAllData () {
+    const formData = this.formEl.querySelectorAll('.formData')
+    const errors = []
 
+    formData.forEach(dataEl => {
+      this.validateSingleData(dataEl) ? errors.push(0) : errors.push(1)
+    })
+
+    if (errors.length === formData.length && errors.reduce((a, current) => a + current, 0) === 0) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  validateSingleData (dataEl) {
+    const inputs = dataEl.querySelectorAll('input')
     let errorMsg
 
     switch (inputs[0].type) {
@@ -106,65 +99,65 @@ export default class Form {
       case 'text':
         errorMsg = 'Veuillez entrer au minimum 2 caractères !'
         if (inputs[0].value.length < 2) {
-          data.hasError = errorMsg
+          this.displayError(dataEl, errorMsg)
+          return false
         } else {
-          data.value = inputs[0].value
-          data.hasError = false
+          this.hideError(dataEl)
+          this.data[inputs[0].name] = inputs[0].value
+          return true
         }
-        break
-
         // vérification que email est bien un pattern email
       case 'email':
         errorMsg = 'Adresse Email invalide, merci de modifier'
         if (!inputs[0].value.match(/^([\w.-]+)@([\w-]+)((\.(\w){2,6})+)$/)) {
-          data.hasError = errorMsg
+          this.displayError(dataEl, errorMsg)
+          return false
         } else {
-          data.value = inputs[0].value
-          data.hasError = false
+          this.hideError(dataEl)
+          this.data[inputs[0].name] = inputs[0].value
+          return true
         }
-
-        break
         // uniquement des nombres
       case 'number':
         errorMsg = "Merci d'entrer une valeur numérique"
         if (!inputs[0].value.match(/^\d+$/)) {
-          data.hasError = errorMsg
+          this.displayError(dataEl, errorMsg)
+          return false
         } else {
-          data.value = inputs[0].value
-          data.hasError = false
+          this.hideError(dataEl)
+          this.data[inputs[0].name] = inputs[0].value
+          return true
         }
-
-        break
         // un et un seul bouton radio doit être sélectionné
       case 'radio': {
         errorMsg = 'Merci de sélectionner une localité'
         const checked = inputs[0].parentElement.querySelectorAll(':checked')
 
         if (checked.length !== 1) {
-          data.hasError = errorMsg
+          this.displayError(dataEl, errorMsg)
+          return false
         } else {
-          data.value = checked[0].value
-          data.hasError = false
+          this.hideError(dataEl)
+          this.data[checked[0].name] = checked[0].value
+          return true
         }
-
-        break
       }
       // les chackbox 'required' doivent être cochées
       case 'checkbox':{
         errorMsg = 'Merci de cocher la case conditions générales'
-        let errors = 0
+        let checkboxErr = 0
         const values = {}
         inputs.forEach(input => {
-          !input.checked && input.hasAttribute('required') ? errors += 1 : values[input.id] = input.checked
+          !input.checked && input.hasAttribute('required') ? checkboxErr += 1 : values[input.id] = input.checked
         })
-        if (errors !== 0) {
-          data.hasError = errorMsg
+        if (checkboxErr !== 0) {
+          this.displayError(dataEl, errorMsg)
+          return false
         } else {
-          data.value = values
-          data.hasError = false
+          this.hideError(dataEl)
+          this.data[inputs[0].name] = values
+          return true
         }
-
-        break
       }
       // date valide comprise entre aujourd'hui et 01/01/1920
       case 'date': {
@@ -174,17 +167,15 @@ export default class Form {
         const minDate = Date.parse('1920-01-01')
 
         if (!isNaN(date) && minDate <= date && date < today) {
-          data.value = inputs[0].value
-          data.hasError = false
+          this.hideError(dataEl)
+          this.data[inputs[0].name] = inputs[0].value
+          return true
         } else {
-          data.hasError = errorMsg
+          this.displayError(dataEl, errorMsg)
+          return false
         }
-
-        break
       }
     }
-
-    return data
   }
 
   // methode permettant d'afficher l'erreur sous l'element formData correspondant
