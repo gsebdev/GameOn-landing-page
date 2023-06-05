@@ -8,7 +8,7 @@ module.exports = {
   },
   output: {
     filename: 'app-bundle.js',
-    path: path.resolve(__dirname, 'starterOnly')
+    path: path.resolve(__dirname, 'assets/js')
   },
   module: {
     rules: [
@@ -21,7 +21,7 @@ module.exports = {
 
   devServer: {
     static: {
-      directory: path.join(__dirname, 'starterOnly')
+      directory: path.join(__dirname, '/')
     },
     compress: true,
     port: 9000
