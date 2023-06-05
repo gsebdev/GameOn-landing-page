@@ -7,6 +7,23 @@ No librairies used, only pure JS.\
 * JS modal
 * Registration form with data validation
 
+## Scripts
+* webpack development server
+```
+npm run serve
+```
+* build bundle
+```
+npm run build
+```
+* lint code
+```
+npm run lint
+```
+* lint fix code
+```
+npm run lintfix
+```
 ## Code description
 * This project is using webpack to bundle the js code
 * The Modal class is used to create the modal. We need to pass to Modal an id, a class for the content of the modal and parameters for the content.
